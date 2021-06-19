@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hello-world
+  labels:
+    name: hello-world
+spec:
+  restartPolicy: "Never"
+  containers:
+    - name: hello-world
+      image: hello-world
+      resources:
+        limits:
+          memory: "128Mi"
+          cpu: "500m"
