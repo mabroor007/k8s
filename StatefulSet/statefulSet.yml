@@ -1,0 +1,83 @@
+# Every stateful set is going to need a service
+#   it must be present before a stateful set is
+#   created because name of the serice is going
+#   to be referenced is stateful set
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-db-service
+  labels:
+    app: test-db-service
+spec:
+  ports:
+    - port: 80
+      targetPort: 5432
+      name: db-port
+  clusterIP: None
+  selector:
+    app: test-db
+---
+# This is a volume claim that will give us volume
+#   to mount in our pod in our stateful set
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: test-db-vc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 200Mi
+---
+# This is the actual stateful set defination
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db
+spec:
+  selector:
+    matchLabels:
+      app: test-db
+  replicas: 1
+  # here is the service referenced which we created early
+  serviceName: "test-db-service"
+  template:
+    metadata:
+      labels:
+        app: test-db
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: test-db
+          image: postgres:alpine
+          env:
+            # here you can reference these variables
+            #   using k8s secrets or like below
+            - name: POSTGRES_PASSWORD
+              value: "pwd"
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_DB
+              value: "test-db"
+          ports:
+            # this is port on which postgres runs so
+            #   we are telling kubernetes that container
+            #   will listen on this port and we will
+            #   reference it in the service that we will
+            #   use to access this pod
+            - containerPort: 5432
+              name: db-port
+          volumeMounts:
+            # this is where we are mounting a volume to
+            #   our pod
+            - name: test-db-v
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        # Referenced volumes are checked here
+        - name: test-db-v
+          # we say that this volume will come from a
+          #   persistentVolumeClaim and we specify
+          #   which claim
+          persistentVolumeClaim:
+            claimName: test-db-vc
