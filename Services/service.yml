@@ -1,0 +1,30 @@
+# Services add an additional layer on top of pods. They help
+#   in the connectivity with pods. Services will
+#   balance requests in between pods that have same label
+#   you can specify the label that service will use to
+#   balance requests. Everything in our cluster will connect
+#   to our pods through the service.
+apiVersion: v1
+kind: Service
+metadata:
+  # name of the service
+  name: test-db-service
+  labels:
+    app: test-db-service
+spec:
+  ports:
+    # port on which service will listen
+    - port: 80
+      # targetPort on which service will forward requests
+      # aka destination port. It is the port on which
+      # the pods behind the service might be listening
+      targetPort: 5432
+      # name of the port for referencing in other k8s objects
+      name: db-port
+  clusterIP: None
+  # this selector will be used by service to loadbalance between
+  # the pods. This selector corresponds to the label which pods
+  # have. The pods with this label will be targets that will recive
+  # requests that will come to this service.
+  selector:
+    app: test-db
