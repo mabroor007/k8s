@@ -17,6 +17,12 @@ spec:
       containers:
         - name: my-website
           image: nginx:alpine
+          env:
+            - name: TEST
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_USERNAME
           ports:
             - containerPort: 80
           resources:
