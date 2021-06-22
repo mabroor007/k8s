@@ -1,0 +1,9 @@
+# ConfigMaps are similar to secrets but
+#   main difference is that configMaps
+#   store value in plain text
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-config
+data:
+  demo-key: "demo value"

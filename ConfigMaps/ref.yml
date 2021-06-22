@@ -1,0 +1,23 @@
+# This is how to reference configMaps
+# in pods config
+#
+# inside environment variables
+env:
+  - name: test-ref
+    valueFrom:
+      configMapKeyRef:
+        name: test-config
+        key: demo-key
+
+# Or by volumeMount
+#
+#  Under pod defination write
+volumeMounts:
+  - name: test
+    mountPath: "/etc/foo"
+    readOnly: true
+volumes:
+  - name: test
+    configMap:
+      name: test-config
+# This will mount configMap as a file
