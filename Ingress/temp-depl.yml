@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-deployment
+  labels:
+    app: test-deployment
+spec:
+  selector:
+    matchLabels:
+      app: test-pod
+  template:
+    metadata:
+      name: test-pod
+      labels:
+        app: test-pod
+    spec:
+      containers:
+        - name: test-container
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-service
+  labels:
+    app: test-service
+spec:
+  selector:
+    app: test-pod
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: nginx-port
+  type: NodePort
