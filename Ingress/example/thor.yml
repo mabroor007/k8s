@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thor-dep
+spec:
+  selector:
+    matchLabels:
+      app: thor-pod
+  template:
+    metadata:
+      name: thor-pod
+      labels:
+        app: thor-pod
+    spec:
+      containers:
+        - name: thor-c
+          image: roortests/test-ing:latest
+          env:
+            - name: NAME
+              value: Thor
+            - name: PORT
+              value: "80"
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: thor-service
+  labels:
+    app: thor-service
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: thor-pod

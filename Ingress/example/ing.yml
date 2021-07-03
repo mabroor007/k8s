@@ -1,0 +1,51 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: beep-ingress
+  annotations:
+    #nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "http://odinfam.com"
+    #nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,X-LANG,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,X-Api-Key,X-Device-Id,Access-Control-Allow-Origin"
+spec:
+  rules:
+    - host: odinfam.com
+      http:
+        paths:
+          - path: "/loki"
+            pathType: Prefix
+            backend:
+              service:
+                name: loki-service
+                port:
+                  number: 80
+
+          - path: "/thor"
+            pathType: Prefix
+            backend:
+              service:
+                name: thor-service
+                port:
+                  number: 80
+
+    - host: loki.odinfam.com
+      http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: loki-service
+                port:
+                  number: 80
+
+    - host: thor.odinfam.com
+      http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: thor-service
+                port:
+                  number: 80

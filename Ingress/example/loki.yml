@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loki-dep
+spec:
+  selector:
+    matchLabels:
+      app: loki-pod
+  template:
+    metadata:
+      name: loki-pod
+      labels:
+        app: loki-pod
+    spec:
+      containers:
+        - name: loki-c
+          image: roortests/test-ing:latest
+          env:
+            - name: NAME
+              value: Loki
+            - name: PORT
+              value: "80"
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loki-service
+  labels:
+    app: loki-service
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: loki-pod
