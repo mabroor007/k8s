@@ -1,0 +1,23 @@
+// you can install certbot using snap
+
+// Get all certificates that you have
+sudo certbot certificates
+
+// create certificate
+sudo certbot certonly --manual --preferred-challenges=dns --email amabroor007@gmail.com --server https://acme-v02.api.letsencrypt.org/directory --agree-tos -d mabroor.codes -d *.mabroor.codes
+
+// delete a certificate
+sudo certbot delete --cert-name 
+
+// creating cert and key files this will copy the key to current dir [easy to reference]
+sudo cat /etc/letsencrypt/live/mabroor.codes/cert.pem >> cert.pem
+sudo cat /etc/letsencrypt/live/mabroor.codes/privkey.pem >> key.pem
+
+// create a secret from certificates
+kubectl create secret tls mabroor-codes-tls --cert=cert.pem --key=key.pem
+
+// delete secret if exists
+kubectl delete secret mabroor-codes-tls
+
+// make sure that ip is scheduled
+kubectl describe ing
